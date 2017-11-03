@@ -1,0 +1,44 @@
+name_tccon.csv
+TCCON results filtered by xco2_ppm_error < 1 and local solar time 12:50 to 13:10
+
+name_oco2_lite.csv
+OCO-2 L2 Lite filtered input data within +/- 0.5 from nearest .5 latitude/longitude
+xco2_quality_flag==0, warn_level<15, xco2_uncertainty < 3, pmax(xco2_uncertainty,2)
+
+name_acos_lite.csv
+ACOS L2 Lite filtered data at +/- 5.0 from nearest .5 latitude/longitude
+xco2_quality_flag==0, warn_level<15, xco2_uncertainty < 3, pmax(xco2_uncertainty,2)
+
+name_oco2_frk.csv
+FRK results from OCO-2 L2 Lite filtered data at nearest .5 latitude/longitude
+
+name_acos_frk.csv
+FRK results from ACOS L2 Lite filtered data at nearest .5 latitude/longitude
+
+name_timeseries.png
+TCCON, OCO-2 FRK, ACOS FRK from 2015-01-01 to 2017-01-01
+
+name_timeseries_oco2.png
+TCCON, OCO-2 FRK, OCO-2 filtered input data from 2015-01-01 to 2017-01-01
+
+name_timeseries_acos.png
+TCCON, ACOS FRK, ACOS filtered input data from 2015-01-01 to 2017-01-01
+
+name_date_map_oco2.png
+Map of OCO-2 FRK XCO2 ppm and uncertainty near the TCCON station
+
+name_date_map_oco2_tccon.png
+Map of OCO-2 FRK XCO2 ppm and uncertainty with averaged TCCON XCO2 and uncertainty on that day
+
+name_date_map_acos.png
+Map of ACOS FRK XCO2 ppm and uncertainty near the TCCON station
+
+name_date_map_acos_tccon.png
+Map of ACOS FRK XCO2 ppm and uncertainty with averaged TCCON XCO2 and uncertainty on that day
+
+name_date_map_diff.png
+Map showing whether OCO-2 FRK and ACOS FRK are within 1 s.e. near the TCCON station 
+
+name_date_crosshair.png
+Cross hairs plot showing whether OCO-2 FRK and ACOS FRK are within 1 s.e. near the TCCON station
+(Phillips, B., Stewart, L.A., & Sutton, A.J. (2010).  "'Cross hairs' plots for diagnostic meta-analysis." Research Synthesis Methods, 1, 308--315.)
