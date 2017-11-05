@@ -15,4 +15,4 @@
 ## If there is a certificate error, please add the flag --no-check-certificate. The "wget" will download the data and put them into a folder named 
 ## "OCO2_L2_LITE_FP.7r". When the download is complete the folder will contain several .nc4.xml and .nc4 files. The .nc4 files contain the data.
 
-wget --user=USER --password=PASS -r -c -nH -nd -np -A nc4 -P nc4 http://oco2.gesdisc.eosdis.nasa.gov/data/s4pa/OCO2_DATA/OCO2_L2_Lite_FP.8r/
+wget --user=USER --password=PASS -r -c -nH -nd -np -A nc4 -P oco2v8 http://oco2.gesdisc.eosdis.nasa.gov/data/s4pa/OCO2_DATA/OCO2_L2_Lite_FP.8r/

@@ -1,6 +1,6 @@
 library(ncdf4)
 
-inputfiles <- list.files(path="nc4", pattern="*.nc4$", full.names=TRUE, recursive=FALSE)
+inputfiles <- list.files(path="oco2v8", pattern="*.nc4$", full.names=TRUE, recursive=FALSE)
 
 for (i in 1:length(inputfiles)) {
   print(paste("reading",inputfiles[i]))
@@ -24,7 +24,6 @@ for (i in 1:length(inputfiles)) {
   oneday <- oneday[oneday$operation_mode<2,]
   oneday <- oneday[(oneday$xco2_uncertainty < 3),]
   oneday$xco2_uncertainty <- pmax(oneday$xco2_uncertainty,2)
-  oneday$day <- as.Date(oneday$datetime)
 
   if (i==1) {
     # If this is the first line, write column names to a new file.
@@ -35,6 +34,6 @@ for (i in 1:length(inputfiles)) {
     output_append <- TRUE
   }
 
-  write.table(data.frame("day"=oneday$day, "lon"=oneday$longitude, "lat"=oneday$latitude, "xco2"=oneday$xco2, "std"=oneday$xco2_uncertainty),
+  write.table(data.frame("day"=oneday$datetime, "lon"=oneday$longitude, "lat"=oneday$latitude, "xco2"=oneday$xco2, "std"=oneday$xco2_uncertainty),
               file='oco2lite.csv', row.names=FALSE, col.names=output_names, sep=',', append=output_append)
 }
