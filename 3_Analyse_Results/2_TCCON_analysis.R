@@ -5,23 +5,23 @@ library(xtable)
 rm(list=ls())
 
 source("TCCON_analysis_utils.R")
-compare_from <- "FRKv7_with_target" # Can be FRKv7_with_target, FRKv7_no_target and v8
-compare_to <- "TCCON" # Can be TCCON or ACOS
+compare_from <- "FRKv7_no_target" # Can be FRKv7_no_target OR FRKv8_no_target
+compare_to <- "TCCON" # Leave as TCCON
+save_images <- 1
 
 #####################
 ### Part 1: LOAD DATA
 #####################
-if(compare_from == "FRKv7_with_target") {
-  dname <- "../data/oco2_frk_tccon_v7_with_target/"
-} else if(compare_from == "FRKv8_with_target") {
-  dname <- "../data/oco2_frk_tccon_v8_target/"
+if(compare_from == "FRKv7_no_target") {
+  dname <- "../data/v7r_frk/"
 } else if(compare_from == "FRKv8_no_target") {
-  dname <- "../data/oco2_frk_tccon_v8_no_target/"
+  dname <- "../data/v8r_frk/"
 }
 
 allcsv <- dir(dname,pattern = "*.csv")
 oco2csv <- paste0(dname,allcsv[which(grepl("oco2",allcsv) & !grepl("lite",allcsv))])
-tcconcsv <- paste0("../data/tccon_60minutes/",allcsv[which(grepl("tccon",allcsv))])
+#tcconcsv <- paste0("../data/tccon/",allcsv[which(grepl("tccon",allcsv))])
+tcconcsv <- paste0("../data/tccon/", dir("../data/tccon",pattern = "*.csv"))
 
 ##################################
 ### Part 2: Summarise TCCON by day
@@ -52,7 +52,8 @@ for(i in 1:length(oco2csv)) {
   OCO2 <- read.csv(oco2csv[i])
   names(OCO2) <- c("oco2_longitude","oco2_latitude","oco2_xco2","oco2_sd","date")
   OCO2$date <- date(OCO2$date)
-  comp_df <- rbind(comp_df,left_join(OCO2,TCCON_summ))
+  comp_df <- rbind(comp_df,inner_join(OCO2,TCCON_summ))
+  if(any(is.na(comp_df$name))) stop()
 }
 
 ##################################
@@ -60,10 +61,12 @@ for(i in 1:length(oco2csv)) {
 ##################################
 
 ## Remove days with NAs in either TCCON or OCO2
-comp_df_sub <- filter(comp_df,!is.na(oco2_xco2) & !is.na(tccon_xco2_av)) 
+#comp_df_sub <- filter(comp_df,!is.na(oco2_xco2) & !is.na(tccon_xco2_av)) 
 
 ## Fix time range
-comp_df_sub <- filter(comp_df_sub, !(month(date) >= 3 & year(date) >= 2017)) 
+#comp_df_sub <- filter(comp_df_sub, !(month(date) >= 3 & year(date) >= 2017)) 
+
+comp_df_sub <- filter(comp_df, !(month(date) >= 3 & year(date) >= 2017)) 
 
 ## Sort TCCON by latitude
 TCCON_latitudes  <- unique(comp_df_sub[,c("name","tccon_latitude")])
@@ -114,7 +117,7 @@ Rows1 <- group_by(comp_df_sub,name) %>% do(station_summary(.)) %>%
          format_rows() %>%
          strsplit("\\n")
 fileConn <- file(paste0(compare_from,".tex"))
-writeLines(Rows1[[1]][9:30], fileConn)
+writeLines(Rows1[[1]][9:33], fileConn)
 close(fileConn)
 
 if(grepl("v7",compare_from)) {
@@ -149,7 +152,7 @@ gScatter <- ggplot(comp_df_sub %>% group_by(name,month(date),year(date)) %>%
                      summarise(tccon_xco2_av = median(tccon_xco2_av),
                                oco2_xco2 = median(oco2_xco2))) + 
   geom_point(aes(tccon_xco2_av,oco2_xco2,colour=name,pch=name),size=2) +  
-  theme_bw() + geom_abline(slope=1) + scale_shape_manual(values=seq(0,22)) + 
+  theme_bw() + geom_abline(slope=1) + scale_shape_manual(values=seq(0,24)) + 
   xlab("TCCON retrievals averaged by station and month (ppm)") + 
   ylab("Level 3 XCO2 predictions averaged by station and month (ppm)") +
   theme(plot.title = element_text(size=20))
@@ -164,7 +167,7 @@ if(compare_from == "FRKv8_no_target") {
 }
 
 ## Do some exploratory plots
-if(compare_from == "FRKv7_with_target") {
+if(save_images) {
   
   ## All plots of predictions
   gpred <- ggplot(comp_df_sub) + geom_point(aes(date,tccon_xco2_av)) + 
@@ -207,31 +210,33 @@ if(compare_from == "FRKv7_with_target") {
       geom_point(aes(date,tccon_xco2_av),col="red",alpha=0.36) + 
       geom_errorbar(aes(date,
                         ymin = tccon_xco2_av - 2*tccon_error_av,
-                        ymax = tccon_xco2_av + 2*tccon_error_av),alpha=0.2,col="red") +
+                        ymax = tccon_xco2_av + 2*tccon_error_av),alpha=0.4,col="red") +
       geom_errorbar(aes(date,
                         ymin = oco2_xco2 - oco2_sd,
-                        ymax = oco2_xco2 + oco2_sd),alpha=0.2,col="black") +
+                        ymax = oco2_xco2 + oco2_sd),alpha=0.4,col="black") +
       theme_bw() + ggtitle(part_label[[name_station]][1]) + 
       theme(text = element_text(size=20)) +
-      ylab("XCO2 (ppm)") + geom_text(data = data.frame(x=date("2014-11-01"),y=408,
+      ylab("XCO2 (ppm)") + geom_text(data = data.frame(x=date("2015-01-01"),
+                                                       y=408,
                                                        txt=paste0("r = ",cor(X$oco2_xco2,X$tccon_xco2_av) %>% round(2) %>% format(nsmall=2))),aes(x,y,label=txt),size=7) +
-      ylim(c(392,409))
+      coord_cartesian(ylim = c(392,409))
     
     g2 <- ggplot(X) + geom_point(aes(date,oco2_xco2 - tccon_xco2_av))   +
       geom_errorbar(aes(date,
                         ymin = oco2_xco2 - tccon_xco2_av  - 2*sqrt(oco2_sd^2 + tccon_error_av^2),
                         ymax = oco2_xco2 - tccon_xco2_av  + 2*sqrt(oco2_sd^2 + tccon_error_av^2)),
-                    alpha=0.2,col="black") +
+                    alpha=0.4,col="black") +
       ylab(expression(paste(Delta," XCO2 (ppm)"))) +
       theme_bw() + ggtitle(part_label[[name_station]][2]) + 
       theme(text = element_text(size=20)) +
-      ylim(c(-4,4.5))
+      coord_cartesian(ylim = c(-4,4.5))
     
-    g3 <- ggplot(X) + geom_histogram(aes(oco2_xco2 - tccon_xco2_av,y=..density..),col="black") + 
+    g3 <- ggplot(X) + geom_histogram(aes(oco2_xco2 - tccon_xco2_av,y=..density..),
+                                     col="black",bins=20) + 
       theme_bw() + xlab(expression(paste(Delta," XCO2 (ppm)"))) + 
       geom_text(data = Summary_results,aes(x,y,label=txt),hjust="right") +
       theme_bw() + ggtitle(part_label[[name_station]][3]) + 
-      theme(text = element_text(size=20)) + ylim(c(0,0.65))
+      theme(text = element_text(size=20)) + ylim(c(0,0.7)) + xlim(c(-3,3))
     
     ggsave(g1,filename=paste0("../img/",name_station,"_ts.png"),width=8,height=4)
     ggsave(g2,filename=paste0("../img/",name_station,"_diff.png"),width=8,height=4)
