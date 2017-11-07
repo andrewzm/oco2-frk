@@ -333,7 +333,7 @@ gSim2FRK <- gbase + geom_tile(data=z_df,aes(x,y,fill=pmax(pmin(Sim2FRK,3),-3.2))
                          name=expression(Y[sim2]),limits=c(-3.2,3)) + 
     theme_bw() + ggtitle("(b)") + theme(text = element_text(size=20))
 
-if(save_image)
+if(save_images)
   ggsave(plot = gSim2FRK,filename="./img/E2_Sim2FRK.png",width=5,height=5)
 
 ## Figure 4 (c) -- the covariance function
