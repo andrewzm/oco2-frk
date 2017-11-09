@@ -353,9 +353,14 @@ cov_df2 <- data.frame(h = xvals, C = yvals)
 
 gcov <- ggplot() + geom_line(data=cov_df1,aes(h,C),col="red",linetype=2) +
     geom_line(data=cov_df2,aes(h,C)) + theme_bw() + xlim(c(0,0.5)) + 
-    ggtitle("(c)") + theme(text = element_text(size=20)) + ylab("C(h)")
+    ggtitle("(c)") + theme(text = element_text(size=20)) + 
+    ylab(expression(paste(C[Y],"(",bold(s),",",bold(r),")"))) +
+    xlab(expression(paste("||",bold(r) - bold(s),"||")))
+  
 if(save_images)
   ggsave(plot = gcov,filename="./img/E2_cov_fns.png",width=5,height=5)
+
+stop()
 
 ################
 #### EXAMPLE 4
