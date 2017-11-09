@@ -1,8 +1,8 @@
-## On statistical approaches to generate Level 3 products from remote sensing retrievals
+# On statistical approaches to generate Level 3 products from remote sensing retrievals
 
 Reproducible code for generating the results in Sections 2 and 3 of the article `On statistical approaches to generate Level 3 products from remote sensing retrievals' by Zammit-Mangion, A., Cressie, N., and Shumack, C.'
 
-# Instructions
+## Instructions
 
 For reproducing the results in Section 2 please run the `R` script `Section2_Running_example.R`. 
 
@@ -15,7 +15,7 @@ For reproducing the Level 3 products and the results in Section 3 you will need 
 **3_Analyse\_Results**: Scripts in this folder are used to generate the comparison tables and figures in Section 3.
 
 
-# Other resources
+## Other resources
 
 The FRK products can be downloaded directly from [here](https://niasra.uow.edu.au/cei/oco2level3/index.html).
 
