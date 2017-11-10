@@ -13,3 +13,7 @@ $ Rscript 3-frk.R
 Produce plots from the level 3 files. You can run multiple instances of this in parallel too.
 
 $ Rscript 4-plot.R
+
+Produce plots showing the difference between V7r FRK and V8r FRK on 13th May 2016.
+
+$ Rscript 5-difference.R

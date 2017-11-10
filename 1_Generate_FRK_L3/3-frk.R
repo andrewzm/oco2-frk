@@ -1,3 +1,8 @@
+## Reads the filtered CSV data file and performs Fixed Rank Kriging one day at a time.
+
+# Change this to "oco2v7" or "oco2v8"
+data_version <- "oco2v7"
+
 library(FRK)
 library(dplyr)
 library(spacetime)
@@ -60,23 +65,23 @@ computeBAUs <- function(selecteddate, sixteendays) {
   return(BAUs)
 }
 
-oco2lite <- read.csv('oco2lite.csv')
+oco2lite <- read.csv(paste0(data_version,'lite.csv'))
 oco2lite$day <- as.Date(oco2lite$day, tz="UTC")
 
-if (!dir.exists("baus")) {
-  dir.create("baus")
+if (!dir.exists(paste0(data_version,"baus"))) {
+  dir.create(paste0(data_version,"baus"))
 }
-if (!dir.exists("level3")) {
-  dir.create("level3")
+if (!dir.exists(paste0(data_version,"level3"))) {
+  dir.create(paste0(data_version,"level3"))
 }
 
 for (selecteddate in as.character(seq(min(oco2lite$day), max(oco2lite$day), "days"))) {
 
-  if ( file.exists(file.path("level3",paste0(selecteddate,".csv"))) ) {
+  if (file.exists(file.path(paste0(data_version,"level3",paste0(selecteddate,".csv"))))) {
     # This date has already been processed
     next
   }
-  file.create(file.path("level3",paste0(selecteddate,".csv")))
+  file.create(file.path(paste0(data_version,"level3",paste0(selecteddate,".csv"))))
 
   print(selecteddate)
 
@@ -89,17 +94,16 @@ for (selecteddate in as.character(seq(min(oco2lite$day), max(oco2lite$day), "day
   if ( is.null(sixteendays) | selecteddate > max(sixteendays$day) | selecteddate < min(sixteendays$day) ) {
     print("Skip this date")
   } else {
-    if ( file.exists(file.path("baus",paste0(selecteddate,".RData"))) ) {
+    if (file.exists(file.path(paste0(data_version,"baus"),paste0(selecteddate,".RData")))) {
       print("Loading BAUs")
-      load(file.path("baus",paste0(selecteddate,".RData")))
+      load(file.path(paste0(data_version,"baus"),paste0(selecteddate,".RData")))
     } else {
       BAUs <- computeBAUs(selecteddate, sixteendays)
       print("Saving BAUs")
-      save(BAUs, file=file.path("baus",paste0(selecteddate,".RData")))
+      save(BAUs, file=file.path(paste0(data_version,"baus"),paste0(selecteddate,".RData")))
     }
-
       Level3 <- BAUs_to_df(selecteddate, BAUs)
       print("Saving Level 3 data")
-      write.csv(Level3, file=file.path("level3",paste0(selecteddate,".csv")), row.names=FALSE)
+      write.csv(Level3, file=file.path(paste0(data_version,"level3"),paste0(selecteddate,".csv")), row.names=FALSE)
   }
 }
