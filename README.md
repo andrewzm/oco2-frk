@@ -4,6 +4,8 @@ Reproducible code for generating the results in Sections 2 and 3 of the article 
 
 ![alt text](https://raw.githubusercontent.com/andrewzm/oco2-frk/master/img/FRK_OCO2E_no_sub.png)
 
+*Figure 8 (e): The difference between the FRK Version 8r predictions and those of FRK Version 7r for 13 May 2016.*
+
 ## Instructions
 
 For reproducing the results in Section 2 please run the `R` script `Section2_Running_example.R`. 
