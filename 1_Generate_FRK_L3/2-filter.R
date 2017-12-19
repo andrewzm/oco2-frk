@@ -1,6 +1,11 @@
+## Reads the nc4 data files, removes unwanted readings, saves filtered data to a new CSV file.
+
+# Change this to "oco2v7" or "oco2v8"
+data_version <- "oco2v7"
+
 library(ncdf4)
 
-inputfiles <- list.files(path="oco2v8", pattern="*.nc4$", full.names=TRUE, recursive=FALSE)
+inputfiles <- list.files(path=data_version, pattern="*.nc4$", full.names=TRUE, recursive=FALSE)
 
 for (i in 1:length(inputfiles)) {
   print(paste("reading",inputfiles[i]))
@@ -35,5 +40,5 @@ for (i in 1:length(inputfiles)) {
   }
 
   write.table(data.frame("day"=oneday$datetime, "lon"=oneday$longitude, "lat"=oneday$latitude, "xco2"=oneday$xco2, "std"=oneday$xco2_uncertainty),
-              file='oco2lite.csv', row.names=FALSE, col.names=output_names, sep=',', append=output_append)
+              file=paste0(data_version,'lite.csv'), row.names=FALSE, col.names=output_names, sep=',', append=output_append)
 }
