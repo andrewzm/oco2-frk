@@ -42,7 +42,7 @@ tcconcsv <- paste0("../data/tccon/", dir("../data/tccon",pattern = "*.csv"))
 
 ## For each TCCON station find mean and total variability
 comp_df <- NULL
-for(i in 1:length(oco2csv)) {
+for(i in 1:length(oco2csv_V7)) {
   TCCON <- read.csv(tcconcsv[i])
 
   ## Fix names because column names changed between folders...
@@ -121,8 +121,12 @@ station_summaryV7 <- function(df) {
              RMSE = with(df,sqrt(mean((oco2_xco2V7 - tccon_xco2_av)^2))),
              R2 = with(df,cor(tccon_xco2_av, oco2_xco2V7)^2),
              Slope = with(df,lm(oco2_xco2V7~tccon_xco2_av + 0)) %>% coefficients(),
-             Cov95 = with(df,cov95(tccon_xco2_av,oco2_xco2V7 - mean(oco2_xco2V7 - tccon_xco2_av),
-                                            sqrt(oco2_sdV7^2 + tccon_error_av^2))))
+             Cov95 = with(df,cov95(tccon_xco2_av,
+                                   oco2_xco2V7,
+                                   sqrt(oco2_sdV7^2 + tccon_error_av^2))),
+             Cov95sc = with(df,cov95(tccon_xco2_av,
+                                   oco2_xco2V7 - mean(oco2_xco2V7 - tccon_xco2_av),
+                                   sqrt(oco2_sdV7^2 + tccon_error_av^2))))
 }
 
 station_summaryV8 <- function(df) {
@@ -132,7 +136,11 @@ station_summaryV8 <- function(df) {
                RMSE = with(df,sqrt(mean((oco2_xco2V8 - tccon_xco2_av)^2))),
                R2 = with(df,cor(tccon_xco2_av, oco2_xco2V8)^2),
                Slope = with(df,lm(oco2_xco2V8~tccon_xco2_av + 0)) %>% coefficients(),
-               Cov95 = with(df,cov95(tccon_xco2_av,oco2_xco2V8 - mean(oco2_xco2V8 - tccon_xco2_av),
+               COv95 = with(df,cov95(tccon_xco2_av,
+                                     oco2_xco2V8,
+                                     sqrt(oco2_sdV8^2 + tccon_error_av^2))),
+               Cov95sc = with(df,cov95(tccon_xco2_av,
+                                     oco2_xco2V8 - mean(oco2_xco2V8 - tccon_xco2_av),
                                      sqrt(oco2_sdV8^2 + tccon_error_av^2))))
 }
 
@@ -146,7 +154,8 @@ format_rows <- function(df) {
 ## Generate the big table (diagnostics for each station)
 Rows1V7df <- group_by(comp_df_sub,name) %>% do(station_summaryV7(.)) %>%
          arrange(desc(name)) %>%
-         as.data.frame()
+         as.data.frame() %>%
+         select(-Cov95sc)
 
 Rows1V7 <- Rows1V7df %>%
          format_rows() %>%
@@ -154,7 +163,8 @@ Rows1V7 <- Rows1V7df %>%
 
 Rows1V8df <- group_by(comp_df_sub,name) %>% do(station_summaryV8(.)) %>%
     arrange(desc(name)) %>%
-    as.data.frame()
+    as.data.frame() %>%
+    select(-Cov95sc)
 
 Rows1V8 <- Rows1V8df %>%
     format_rows() %>%
@@ -180,11 +190,13 @@ rowtitle2V8 <- "Total v8r (w/o Pas.)"
 ## With Pasadena
 Rows2V7 <- cbind(data.frame(name = rowtitle1V7),
                station_summaryV7(comp_df_sub)) %>%
+         select(-Cov95sc) %>%
          format_rows() %>%
          strsplit("\\n")
 
 Rows2V8 <- cbind(data.frame(name = rowtitle1V8),
                  station_summaryV8(comp_df_sub)) %>%
+    select(-Cov95sc) %>%
     format_rows() %>%
     strsplit("\\n")
 
@@ -192,12 +204,14 @@ Rows2V8 <- cbind(data.frame(name = rowtitle1V8),
 Rows3V7 <- filter(comp_df_sub,!(name == "Pasadena")) %>%
   station_summaryV7()  %>%
   cbind(data.frame(name = rowtitle2V7), .) %>%
+  select(-Cov95sc) %>%
   format_rows() %>%
   strsplit("\\n")
 
 Rows3V8 <- filter(comp_df_sub,!(name == "Pasadena")) %>%
     station_summaryV8()  %>%
     cbind(data.frame(name = rowtitle2V8), .) %>%
+    select(-Cov95sc) %>%
     format_rows() %>%
     strsplit("\\n")
 
@@ -209,7 +223,6 @@ close(fileConn)
 fileConn <- file("FRKv8_no_target_TOTAL.tex")
 writeLines(c(Rows2V8[[1]][9], Rows3V8[[1]][9]), fileConn)
 close(fileConn)
-
 
 # Plot scatter plot of differences B
 gScatter <- function(x) {
