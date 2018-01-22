@@ -13,7 +13,7 @@ library("Matrix")
 library("RandomFields")      
 library("sp")
 
-save_images = 0  # set to 1 to save images
+save_images = 1  # set to 1 to save images
 
 
 ###################### UTILITY FUNCTIONS  #################################
@@ -182,13 +182,13 @@ if(save_images)
 
 gpred <- gbase + geom_tile(data=z_df,aes(x,y,fill=gstat_pred)) + 
     scale_fill_gradientn(colours=my_colours, name="pred",limits=c(-3.2,3)) + 
-    theme_bw() + ggtitle("(d)") + theme(text = element_text(size=20))
+    theme_bw() + ggtitle("(c)") + theme(text = element_text(size=20))
 if(save_images) 
   ggsave(plot = gpred,filename="./img/E1_pred.png",width=5,height=5)
 
 gse <- gbase + geom_tile(data = z_df, aes(x,y,fill=gstat_se)) + 
     scale_fill_distiller(palette="BrBG",name="s.e.") +
-    theme_bw() + ggtitle("(c)") + theme(text = element_text(size=20))
+    theme_bw() + ggtitle("(d)") + theme(text = element_text(size=20))
 if(save_images) 
   ggsave(plot = gse,filename="./img/E1_se.png",width=5,height=5)
 
@@ -359,8 +359,6 @@ gcov <- ggplot() + geom_line(data=cov_df1,aes(h,C),col="red",linetype=2) +
   
 if(save_images)
   ggsave(plot = gcov,filename="./img/E2_cov_fns.png",width=5,height=5)
-
-stop()
 
 ################
 #### EXAMPLE 4
