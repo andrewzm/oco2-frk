@@ -1,6 +1,6 @@
 # On statistical approaches to generate Level 3 products from remote sensing retrievals
 
-Reproducible code for generating the results in Sections 2 and 3 of the article `On statistical approaches to generate Level 3 products from remote sensing retrievals' by Zammit-Mangion, A., Cressie, N., and Shumack, C.'
+Reproducible code for generating the results in Sections 2 and 3 of the article `On statistical approaches to generate Level 3 products from remote sensing retrievals' by [Zammit-Mangion, A., Cressie, N., and Shumack, C.](http://www.mdpi.com/2072-4292/10/1/155)
 
 ![alt text](https://raw.githubusercontent.com/andrewzm/oco2-frk/master/img/FRK_OCO2E_no_sub.png)
 
